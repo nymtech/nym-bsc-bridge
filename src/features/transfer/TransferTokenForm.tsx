@@ -2,11 +2,9 @@ import { IToken, Token, TokenAmount, WarpCore } from '@hyperlane-xyz/sdk';
 import {
   ProtocolType,
   convertToScaledAmount,
-  eqAddress,
   errorToString,
   fromWei,
   isNullish,
-  isValidAddressEvm,
   objKeys,
   toWei,
 } from '@hyperlane-xyz/utils';
