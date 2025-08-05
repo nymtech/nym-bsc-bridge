@@ -1,4 +1,4 @@
-import { IRegistry, chainMetadata as publishedChainMetadata } from '@hyperlane-xyz/registry';
+import { IRegistry } from '@hyperlane-xyz/registry';
 import {
   ChainMap,
   ChainMetadata,
@@ -9,7 +9,6 @@ import {
 import {
   objFilter,
   objMap,
-  promiseObjAll,
   ProtocolType,
   tryParseJsonOrYaml,
 } from '@hyperlane-xyz/utils';
@@ -17,7 +16,6 @@ import { z } from 'zod';
 import { chains as ChainsTS } from '../../consts/chains.ts';
 import ChainsYaml from '../../consts/chains.yaml';
 import { config } from '../../consts/config.ts';
-import { links } from '../../consts/links.ts';
 import { logger } from '../../utils/logger.ts';
 
 export async function assembleChainMetadata(
@@ -41,8 +39,8 @@ export async function assembleChainMetadata(
     logger.debug('Using custom registry chain metadata from:', config.registryUrl);
     registryChainMetadata = await registry.getMetadata();
   } else {
-    logger.debug('Using default published registry for chain metadata');
-    registryChainMetadata = publishedChainMetadata;
+    logger.debug('Registry disabled - using only local chain definitions');
+    registryChainMetadata = {}; // Empty registry, will only use local chains
   }
 
   // Filter out chains that are not in the tokens config
@@ -50,16 +48,7 @@ export async function assembleChainMetadata(
     chainsInTokens.includes(c),
   );
 
-  // TODO have the registry do this automatically
-  registryChainMetadata = await promiseObjAll(
-    objMap(
-      registryChainMetadata,
-      async (chainName, metadata): Promise<ChainMetadata> => ({
-        ...metadata,
-        logoURI: `${links.imgPath}/chains/${chainName}/logo.svg`,
-      }),
-    ),
-  );
+  // Since we're not using registry, we only merge with local filesystem metadata
   const mergedChainMetadata = mergeChainMetadataMap(registryChainMetadata, filesystemMetadata);
 
   const parsedRpcOverridesResult = tryParseJsonOrYaml(config.rpcOverrides);

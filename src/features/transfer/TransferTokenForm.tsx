@@ -1,23 +1,23 @@
 import { IToken, Token, TokenAmount, WarpCore } from '@hyperlane-xyz/sdk';
 import {
-  ProtocolType,
-  convertToScaledAmount,
-  errorToString,
-  fromWei,
-  isNullish,
-  objKeys,
-  toWei,
+    ProtocolType,
+    convertToScaledAmount,
+    errorToString,
+    fromWei,
+    isNullish,
+    objKeys,
+    toWei,
 } from '@hyperlane-xyz/utils';
 import {
-  AccountInfo,
-  ChevronIcon,
-  IconButton,
-  SpinnerIcon,
-  SwapIcon,
-  getAccountAddressAndPubKey,
-  useAccountAddressForChain,
-  useAccounts,
-  useModal,
+    AccountInfo,
+    ChevronIcon,
+    IconButton,
+    SpinnerIcon,
+    SwapIcon,
+    getAccountAddressAndPubKey,
+    useAccountAddressForChain,
+    useAccounts,
+    useModal,
 } from '@hyperlane-xyz/widgets';
 import BigNumber from 'bignumber.js';
 import { Form, Formik, useFormikContext } from 'formik';
@@ -44,16 +44,16 @@ import { SelectOrInputTokenIds } from '../tokens/SelectOrInputTokenIds';
 import { TokenSelectField } from '../tokens/TokenSelectField';
 import { useIsApproveRequired } from '../tokens/approval';
 import {
-  getDestinationNativeBalance,
-  useDestinationBalance,
-  useOriginBalance,
+    getDestinationNativeBalance,
+    useDestinationBalance,
+    useOriginBalance,
 } from '../tokens/balances';
 import {
-  getIndexForToken,
-  getInitialTokenIndex,
-  getTokenByIndex,
-  getTokenIndexFromChains,
-  useWarpCore,
+    getIndexForToken,
+    getInitialTokenIndex,
+    getTokenByIndex,
+    getTokenIndexFromChains,
+    useWarpCore,
 } from '../tokens/hooks';
 import { getTokensWithSameCollateralAddresses, isValidMultiCollateralToken } from '../tokens/utils';
 import { WalletConnectionWarning } from '../wallet/WalletConnectionWarning';

@@ -18,3 +18,72 @@
 #   protocol: ethereum
 #   rpcUrls:
 #     - http: http://127.0.0.1:8555
+nyxtestnet:
+  logoURI: /nym.ico
+  bech32Prefix: n
+  blocks:
+    confirmations: 1
+    estimateBlockTime: 3
+    reorgPeriod: 1
+  canonicalAsset: unym
+  chainId: nyx
+  contractAddressBytes: 32
+  deployer:
+    name: Anon Works
+    url: https://www.hyperlane.xyz
+  displayName: Nym
+  domainId: 1314475348
+  gasCurrencyCoinGeckoId: nym
+  gasPrice:
+    amount: "0.025"
+    denom: unym
+  grpcUrls:
+    - http: http://grpc.sandbox.nymtech.net:9099
+  index:
+    chunk: 10
+    from: 12000000
+  name: nyxtestnet
+  isTestnet: true
+  nativeToken:
+    decimals: 6
+    denom: unym
+    name: Nym
+    symbol: NYM
+  protocol: cosmosnative
+  restUrls:
+    - http: https://api.sandbox.nymtech.net
+  rpcUrls:
+    - http: https://rpc.sandbox.nymtech.net
+  slip44: 118
+  technicalStack: other
+  transactionOverrides:
+    gasPrice: "0.025unym"
+
+bsctestnet:
+  logoURI: /bsc-logo.png
+  blockExplorers:
+    - apiUrl: https://api-testnet.bscscan.com/api
+      family: etherscan
+      name: BscScan
+      url: https://testnet.bscscan.com
+  blocks:
+    confirmations: 1
+    estimateBlockTime: 3
+    reorgPeriod: 9
+  chainId: 97
+  deployer:
+    name: Abacus Works
+    url: https://www.hyperlane.xyz
+  displayName: BSC Testnet
+  domainId: 97
+  gasCurrencyCoinGeckoId: binancecoin
+  isTestnet: true
+  name: bsctestnet
+  nativeToken:
+    decimals: 18
+    name: BNB
+    symbol: BNB
+  protocol: ethereum
+  rpcUrls:
+    - http: https://bsc-testnet.publicnode.com
+    - http: https://bsc-testnet.drpc.org

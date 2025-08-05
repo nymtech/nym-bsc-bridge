@@ -1,7 +1,4 @@
-import {
-  IRegistry,
-  warpRouteConfigs as publishedRegistryWarpRoutes,
-} from '@hyperlane-xyz/registry';
+import { IRegistry } from '@hyperlane-xyz/registry';
 import { WarpCoreConfig, WarpCoreConfigSchema, validateZodResult } from '@hyperlane-xyz/sdk';
 import { isObjEmpty, objFilter, objMerge } from '@hyperlane-xyz/utils';
 import { config } from '../../consts/config.ts';
@@ -27,11 +24,12 @@ export async function assembleWarpCoreConfig(
       registryWarpRoutes = await registry.getWarpRoutes();
       if (isObjEmpty(registryWarpRoutes)) throw new Error('Warp routes empty');
     } else {
-      throw new Error('No custom registry URL provided');
+      logger.debug('Registry disabled - using only local warp route definitions');
+      registryWarpRoutes = {}; // Empty registry routes, will only use local configs
     }
   } catch {
-    logger.debug('Using default published registry for warp routes');
-    registryWarpRoutes = publishedRegistryWarpRoutes;
+    logger.debug('Failed to get registry warp routes, using only local configs');
+    registryWarpRoutes = {}; // Use empty object instead of published registry
   }
 
   const filteredRegistryConfigMap = warpRouteWhitelist

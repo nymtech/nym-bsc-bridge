@@ -1,17 +1,17 @@
 import {
-  chainAddresses,
-  chainMetadata,
-  GithubRegistry,
-  IRegistry,
-  PartialRegistry,
+    chainAddresses,
+    chainMetadata,
+    GithubRegistry,
+    IRegistry,
+    PartialRegistry,
 } from '@hyperlane-xyz/registry';
 import {
-  ChainMap,
-  ChainMetadata,
-  ChainName,
-  MultiProtocolProvider,
-  WarpCore,
-  WarpCoreConfig,
+    ChainMap,
+    ChainMetadata,
+    ChainName,
+    MultiProtocolProvider,
+    WarpCore,
+    WarpCoreConfig,
 } from '@hyperlane-xyz/sdk';
 import { objFilter } from '@hyperlane-xyz/utils';
 import { toast } from 'react-toastify';
@@ -122,11 +122,16 @@ export const useStore = create<AppState>()(
         });
       },
       multiProvider: new MultiProtocolProvider({}),
-      registry: new GithubRegistry({
-        uri: config.registryUrl,
-        branch: config.registryBranch,
-        proxyUrl: config.registryProxyUrl,
-      }),
+      registry: config.registryUrl 
+        ? new GithubRegistry({
+            uri: config.registryUrl,
+            branch: config.registryBranch,
+            proxyUrl: config.registryProxyUrl,
+          })
+        : new PartialRegistry({
+            chainAddresses: chainAddresses,
+            chainMetadata: chainMetadata,
+          }),
       warpCore: new WarpCore(new MultiProtocolProvider({}), []),
       setWarpContext: (context) => {
         logger.debug('Setting warp context in store');
