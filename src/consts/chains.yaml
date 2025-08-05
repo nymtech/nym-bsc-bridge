@@ -26,7 +26,7 @@ nyxtestnet:
     estimateBlockTime: 3
     reorgPeriod: 1
   canonicalAsset: unym
-  chainId: nyx
+  chainId: sandbox
   contractAddressBytes: 32
   deployer:
     name: Anon Works
