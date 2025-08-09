@@ -3,20 +3,20 @@
 # The input here is typically the output of the Hyperlane CLI warp deploy command
 ---
 tokens:
-  - addressOrDenom: "0x06a5f072114b344725938bf26277fad9d78439f8"
-    chainName: bsctestnet
+  - addressOrDenom: "0x31d0E332ccEf98b583E40e0cEFBb7502c9a6b3f8"
+    chainName: bsc
     connections:
-      - token: cosmosnative|nyxtestnet|0x726f757465725f61707000000000000000000000000000010000000000000004
+      - token: cosmosnative|nym|0x726f757465725f61707000000000000000000000000000010000000000000001
     decimals: 6
     name: Nym
     standard: EvmHypSynthetic
     symbol: NYM
     logoURI: "/nym.ico"
-  - addressOrDenom: "0x726f757465725f61707000000000000000000000000000010000000000000004"
-    chainName: nyxtestnet
+  - addressOrDenom: "0x726f757465725f61707000000000000000000000000000010000000000000001"
+    chainName: nym
     collateralAddressOrDenom: unym
     connections:
-      - token: ethereum|bsctestnet|0x06a5f072114b344725938bf26277fad9d78439f8
+      - token: ethereum|bsc|0x31d0E332ccEf98b583E40e0cEFBb7502c9a6b3f8
     decimals: 6
     name: Nym
     standard: CosmosNativeHypCollateral
