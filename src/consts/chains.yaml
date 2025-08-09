@@ -23,27 +23,27 @@ nyxtestnet:
   bech32Prefix: n
   blocks:
     confirmations: 1
-    estimateBlockTime: 3
+    estimateBlockTime: 6
     reorgPeriod: 1
   canonicalAsset: unym
-  chainId: sandbox
+  chainId: nyx
   contractAddressBytes: 32
   deployer:
-    name: Anon Works
-    url: https://www.hyperlane.xyz
+    name: Nym
+    url: https://www.nym.com
   displayName: Nym
-  domainId: 1314475348
+  domainId: 5134669
   gasCurrencyCoinGeckoId: nym
   gasPrice:
     amount: "0.025"
     denom: unym
   grpcUrls:
-    - http: http://grpc.sandbox.nymtech.net:9099
+    - http: https://grpc.nymtech.net:443
   index:
     chunk: 10
-    from: 12000000
-  name: nyxtestnet
-  isTestnet: true
+    from: 19500000
+  name: nym
+  isTestnet: false
   nativeToken:
     decimals: 6
     denom: unym
@@ -51,9 +51,9 @@ nyxtestnet:
     symbol: NYM
   protocol: cosmosnative
   restUrls:
-    - http: https://api.sandbox.nymtech.net
+    - http: https://api.nymtech.net
   rpcUrls:
-    - http: https://rpc.sandbox.nymtech.net
+    - http: https://rpc.nymtech.net:443
   slip44: 118
   technicalStack: other
   transactionOverrides:
@@ -62,28 +62,34 @@ nyxtestnet:
 bsctestnet:
   logoURI: /bsc-logo.png
   blockExplorers:
-    - apiUrl: https://api-testnet.bscscan.com/api
+    - apiKey: GP69JEAP2W7YFJT9ZJTEPGQT6Y6KMW44ZN
+      apiUrl: https://api.etherscan.io/v2/api?chainid=56
       family: etherscan
       name: BscScan
-      url: https://testnet.bscscan.com
+      url: https://bscscan.com
   blocks:
     confirmations: 1
     estimateBlockTime: 3
-    reorgPeriod: 9
-  chainId: 97
+    reorgPeriod: finalized
+  chainId: 56
   deployer:
     name: Abacus Works
     url: https://www.hyperlane.xyz
-  displayName: BSC Testnet
-  domainId: 97
+  displayName: Binance Smart Chain
+  displayNameShort: Binance
+  domainId: 56
   gasCurrencyCoinGeckoId: binancecoin
-  isTestnet: true
-  name: bsctestnet
+  gnosisSafeTransactionServiceUrl: https://safe-transaction-bsc.safe.global/
+  name: bsc
   nativeToken:
     decimals: 18
     name: BNB
     symbol: BNB
   protocol: ethereum
   rpcUrls:
-    - http: https://bsc-testnet.publicnode.com
-    - http: https://bsc-testnet.drpc.org
+    - http: https://bsc.drpc.org
+    - http: https://bnb.rpc.subquery.network/public
+    - http: https://binance.llamarpc.com
+    - http: https://bsc.blockrazor.xyz
+    - http: https://bsc-pokt.nodies.app
+  technicalStack: other
