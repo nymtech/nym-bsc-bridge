@@ -59,7 +59,7 @@ nym:
   transactionOverrides:
     gasPrice: "0.025unym"
 
-bsctestnet:
+bsc:
   logoURI: /bsc-logo.png
   blockExplorers:
     - apiKey: GP69JEAP2W7YFJT9ZJTEPGQT6Y6KMW44ZN
