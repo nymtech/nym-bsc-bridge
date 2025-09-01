@@ -231,7 +231,7 @@ function AmountSection({ isReview }: { isReview: boolean }) {
   return (
     <div className="space-y-2">
       <div className="flex justify-end">
-        <TokenBalance label="My balance" balance={balance} isLoading={isLoading} isError={isError} />
+        <TokenBalance label="Wallet balance" balance={balance} isLoading={isLoading} isError={isError} />
       </div>
       <div className="relative w-full">
         <TextField
@@ -278,7 +278,7 @@ function RecipientSection({ isReview }: { isReview: boolean }) {
         </label>
         <div className="text-right space-y-1">
           <TokenBalance
-            label="Your balance"
+            label="Recipient balance"
             balance={destinationBalance}
             isLoading={destLoading}
             isError={destError}
