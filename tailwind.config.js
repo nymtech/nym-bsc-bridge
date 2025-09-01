@@ -18,55 +18,89 @@ module.exports = {
     },
     extend: {
       colors: {
-        black: '#010101',
-        white: '#ffffff',
+        black: '#000000',
+        white: '#FFFFFF',
+        // Nym Primary Greens
+        'nym-green': {
+          primary: '#09B051',
+          dark: '#013218',
+          light: '#7CF9B1',
+          lighter: '#D9FFE8',
+        },
+        // Nym Grays / Neutrals
+        'nym-gray': {
+          darkest: '#242628',
+          dark: '#424648',
+          medium: '#818A8F',
+          light: '#ABB2B5',
+          lighter: '#CED2D3',
+          lightest: '#E5E7E8',
+        },
+        // Nym Blues
+        'nym-blue': {
+          dark: '#2C2D3A',
+          medium: '#585B7B',
+          light: '#959BBF',
+          lighter: '#DAE0EB',
+          lightest: '#F4F7FB',
+        },
+        // Nym Accent/Status
+        'nym-accent': {
+          cyan: '#7A9596',
+        },
+        'nym-status': {
+          success: '#00CA33',
+          warning: '#F9BE2B',
+          error: '#DF1400',
+        },
+        // Legacy colors for compatibility
         gray: { ...defaultColors.gray, '150': '#EBEDF0', '250': '#404040', '350': '#6B6B6B' },
         primary: {
-          50: '#E6EDF9',
-          100: '#CDDCF4',
-          200: '#A7C2EC',
-          300: '#82A8E4',
-          400: '#5385D2',
-          500: '#2764c1',
-          600: '#1D4685',
-          700: '#162A4A',
-          800: '#11213B',
-          900: '#0D192C',
+          50: '#D9FFE8', // Light Nym green
+          100: '#B3F2C7',
+          200: '#8EE6A6',
+          300: '#69D985',
+          400: '#44CD64',
+          500: '#09B051', // Nym primary green
+          600: '#089146',
+          700: '#06723A',
+          800: '#04542F',
+          900: '#033524',
         },
         accent: {
-          50: '#FAEAF8',
-          100: '#F2C1EA',
-          200: '#EA98DC',
-          300: '#E26ECE',
-          400: '#DA45C0',
-          500: '#D631B9',
-          600: '#C02CA6',
-          700: '#952281',
-          800: '#6B185C',
-          900: '#400E37',
+          50: '#D9FFE8', // Light Nym green
+          100: '#B3F2C7',
+          200: '#8EE6A6',
+          300: '#69D985',
+          400: '#44CD64',
+          500: '#09B051', // Nym primary green
+          600: '#089146',
+          700: '#06723A',
+          800: '#04542F',
+          900: '#033524',
         },
         red: {
           100: '#EBBAB8',
           200: '#DF8D8A',
           300: '#D25F5B',
           400: '#C5312C',
-          500: '#BF1B15',
+          500: '#DF1400', // Nym error red
           600: '#AB1812',
           700: '#85120E',
           800: '#5F0D0A',
           900: '#390806',
         },
         green: {
-          50: '#D3E3DB',
+          50: '#D9FFE8', // Nym green lighter
           100: '#BED5C9',
           200: '#93BAA6',
           300: '#679F82',
           400: '#3C835E',
-          500: '#27764d',
+          500: '#09B051', // Nym primary green
           600: '#236A45',
           700: '#1F5E3D',
           800: '#17462E',
-          900: '#0F2F1E',
+          900: '#013218', // Nym green dark
         },
       },
       fontSize: {

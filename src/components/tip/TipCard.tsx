@@ -1,30 +1,28 @@
 import { IconButton, XCircleIcon } from '@hyperlane-xyz/widgets';
 import Image from 'next/image';
 import { useState } from 'react';
-import { config } from '../../consts/config';
-import { links } from '../../consts/links';
 import InfoCircle from '../../images/icons/info-circle.svg';
 import { Card } from '../layout/Card';
 
 export function TipCard() {
-  const [show, setShow] = useState(config.showTipBox);
+  const [show, setShow] = useState(true); // Always show for Nym Bridge
   if (!show) return null;
   return (
-    <Card className="w-100 p-2 sm:w-[31rem]">
-      <h2 className="text-primary-500">Bridge Tokens with Hyperlane Warp Routes!</h2>
+    <Card className="w-100 p-3 sm:w-[31rem] bg-gradient-to-r from-nym-green-lighter to-nym-blue-lightest border border-nym-green-primary/20">
+      <h2 className="text-nym-green-primary font-semibold">Welcome to Nym Bridge</h2>
       <div className="flex items-end justify-between">
-        <p className="mt-1 max-w-[75%] text-xs">
-          Warp Routes make it easy to permissionlessly take your tokens interchain. Fork this
-          template to get started!
+        <p className="mt-2 max-w-[75%] text-sm text-nym-gray-darkest">
+          Bridge NYM tokens seamlessly between Binance Smart Chain and Nym Network.
+          Fast, secure, and decentralized cross-chain transfers powered by Hyperlane.
         </p>
         <a
-          href={links.github}
+          href="https://nym.com"
           target="_blank"
           rel="noopener noreferrer"
-          className="ml-2 flex items-center rounded-lg bg-gray-100 px-3 py-1.5 text-xs text-primary-500 transition-all hover:bg-gray-200 active:bg-gray-300 sm:text-sm"
+          className="ml-2 flex items-center rounded-lg bg-nym-green-primary px-3 py-1.5 text-xs text-white transition-all hover:bg-nym-green-dark active:scale-95 sm:text-sm"
         >
           <Image src={InfoCircle} width={12} alt="" />
-          <span className="ml-1.5 hidden text-sm sm:inline">More</span>
+          <span className="ml-1.5 hidden text-sm sm:inline">Learn More</span>
         </a>
       </div>
       <div className="absolute right-3 top-3">

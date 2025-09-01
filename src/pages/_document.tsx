@@ -7,12 +7,13 @@ export default function Document() {
       <Head>
         <meta charSet="utf-8" />
 
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/nym.ico" />
+        <link rel="icon" type="image/x-icon" href="/nym.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/nym.ico" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/nym.ico" />
         <link rel="manifest" href="/site.webmanifest" />
         <link rel="mask-icon" href="/safari-pinned-tab.svg" color={BRAND_COLOR} />
-        <link rel="shortcut icon" href="/favicon.png" />
+        <link rel="shortcut icon" href="/nym.ico" />
         <meta name="msapplication-TileColor" content="#ffffff" />
         <meta name="theme-color" content="#ffffff" />
 
@@ -27,7 +28,7 @@ export default function Document() {
         <meta property="og:url" content={APP_URL} />
         <meta property="og:title" content={APP_NAME} />
         <meta property="og:type" content="website" />
-        <meta property="og:image" content={`${APP_URL}/logo.png`} />
+        <meta property="og:image" content={`${APP_URL}/nym.ico`} />
         <meta property="og:description" content={APP_DESCRIPTION} />
       </Head>
       <body className={`${MAIN_FONT.variable} font-sans text-black`}>

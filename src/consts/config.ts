@@ -4,7 +4,7 @@ import { ADDRESS_BLACKLIST } from './blacklist';
 
 const isDevMode = process?.env?.NODE_ENV === 'development';
 const version = process?.env?.NEXT_PUBLIC_VERSION || '0.0.0';
-const registryUrl = undefined; // Disabled to only use local chains.yaml
+const registryUrl = undefined; // Disabled - using only hardcoded chains and routes
 const registryBranch = process?.env?.NEXT_PUBLIC_REGISTRY_BRANCH || undefined;
 const registryProxyUrl = process?.env?.NEXT_PUBLIC_GITHUB_PROXY || 'https://proxy.hyperlane.xyz';
 const walletConnectProjectId = process?.env?.NEXT_PUBLIC_WALLET_CONNECT_ID || '';
@@ -38,14 +38,14 @@ export const config: Config = Object.freeze({
   addressBlacklist: ADDRESS_BLACKLIST.map((address) => address.toLowerCase()),
   chainWalletWhitelists,
   enableExplorerLink: false,
-  defaultOriginChain: undefined,
-  defaultDestinationChain: undefined,
+  defaultOriginChain: 'bsc', // Default to BSC for Nym Bridge
+  defaultDestinationChain: 'nym', // Default to Nym for Nym Bridge
   isDevMode,
   registryUrl,
   registryBranch,
   registryProxyUrl,
-  showAddRouteButton: true,
-  showAddChainButton: true,
+  showAddRouteButton: false, // Disabled for Nym Bridge
+  showAddChainButton: false, // Disabled for Nym Bridge
   showDisabledTokens: false,
   showTipBox: false,
   version,

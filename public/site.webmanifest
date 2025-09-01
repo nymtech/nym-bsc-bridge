@@ -1,7 +1,12 @@
 {
-    "name": "",
-    "short_name": "",
+    "name": "Nym Bridge",
+    "short_name": "Nym Bridge",
     "icons": [
+        {
+            "src": "/nym.ico",
+            "sizes": "32x32",
+            "type": "image/x-icon"
+        },
         {
             "src": "/android-chrome-192x192.png",
             "sizes": "192x192",
@@ -13,7 +18,7 @@
             "type": "image/png"
         }
     ],
-    "theme_color": "#ffffff",
-    "background_color": "#ffffff",
+    "theme_color": "#09B051",
+    "background_color": "#151515",
     "display": "standalone"
 }

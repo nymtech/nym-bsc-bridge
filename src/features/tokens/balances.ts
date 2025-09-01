@@ -41,10 +41,27 @@ export function useOriginBalance({ origin, tokenIndex }: TransferFormValues) {
   return useBalance(origin, token, address);
 }
 
-export function useDestinationBalance({ destination, tokenIndex, recipient }: TransferFormValues) {
+export function useDestinationBalance({ destination, tokenIndex }: TransferFormValues) {
+  const multiProvider = useMultiProvider();
+  const address = useAccountAddressForChain(multiProvider, destination);
   const originToken = useTokenByIndex(tokenIndex);
   const connection = originToken?.getConnectionForChain(destination);
-  return useBalance(destination, connection?.token, recipient);
+  return useBalance(destination, connection?.token, address);
+}
+
+export function useRecipientBalance({ destination, recipient, tokenIndex }: { destination: ChainName; recipient: Address; tokenIndex?: number }) {
+  const multiProvider = useMultiProvider();
+  const originToken = useTokenByIndex(tokenIndex);
+  
+  // Get the destination token that corresponds to the origin token being transferred
+  const connection = originToken?.getConnectionForChain(destination);
+  const destinationToken = connection?.token;
+  
+  // If we have a destination token (for cross-chain transfers), use that
+  // Otherwise fall back to native token
+  const token = destinationToken || Token.FromChainMetadataNativeToken(multiProvider.getChainMetadata(destination));
+  
+  return useBalance(destination, token, recipient || undefined);
 }
 
 export async function getDestinationNativeBalance(

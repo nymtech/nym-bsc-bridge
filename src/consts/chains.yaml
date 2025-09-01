@@ -75,7 +75,7 @@ bsc:
   deployer:
     name: Abacus Works
     url: https://www.hyperlane.xyz
-  displayName: Binance Smart Chain
+  displayName: Binance
   displayNameShort: Binance
   domainId: 56
   gasCurrencyCoinGeckoId: binancecoin

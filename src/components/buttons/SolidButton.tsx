@@ -43,10 +43,10 @@ export function SolidButton(
     baseColors = 'bg-white text-black';
     onHover = 'hover:bg-primary-100';
   } else if (color === 'gray') {
-    baseColors = 'bg-gray-100 text-primary-500';
-    onHover = 'hover:bg-gray-200';
+    baseColors = 'bg-nym-gray-lightest text-nym-gray-darkest border border-nym-gray-lighter';
+    onHover = 'hover:bg-nym-gray-lighter hover:border-nym-gray-light';
   }
-  const onDisabled = 'disabled:bg-gray-300 disabled:text-gray-500';
+  const onDisabled = 'disabled:bg-nym-gray-lighter disabled:text-nym-gray-medium disabled:border-nym-gray-lighter';
   const weight = bold ? 'font-semibold' : '';
   const allClasses = `${base} ${baseColors} ${onHover} ${onDisabled} ${weight} ${className}`;
 

@@ -35,7 +35,13 @@ function initWagmi(multiProvider: MultiProtocolProvider) {
         wallets: [binanceWallet, coinbaseWallet, rainbowWallet, trustWallet, argentWallet],
       },
     ],
-    { appName: APP_NAME, projectId: config.walletConnectProjectId },
+    { 
+      appName: APP_NAME, 
+      projectId: config.walletConnectProjectId,
+      appDescription: 'Bridge NYM tokens between chains',
+      appUrl: 'https://nym-bridge.vercel.app',
+      appIcon: '/nym.ico'
+    },
   );
 
   const wagmiConfig = createConfig({

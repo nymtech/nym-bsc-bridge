@@ -42,7 +42,7 @@ export function CosmosWalletContext({ children }: PropsWithChildren<unknown>) {
               name: APP_NAME,
               description: APP_DESCRIPTION,
               url: APP_URL,
-              icons: [],
+              icons: ['/nym.ico', '/android-chrome-192x192.png'],
             },
           },
         }}
