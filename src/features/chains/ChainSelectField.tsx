@@ -101,9 +101,9 @@ export function ChainSelectField({
 }
 
 const styles = {
-  base: 'px-2 py-1.5 w-full flex items-center justify-between text-sm bg-white rounded-lg border border-primary-300 outline-none transition-colors duration-500',
-  enabled: 'hover:bg-gray-100 active:scale-95 focus:border-primary-500',
+  base: 'px-2 py-1.5 w-full flex items-center justify-between text-sm bg-white rounded-lg border border-nym-green-primary outline-none transition-colors duration-500',
+  enabled: 'hover:bg-gray-100 active:scale-95 focus:border-nym-green-dark',
   disabled: 'bg-gray-150 cursor-default',
   addButton:
-    'flex text-xxs text-primary-500 hover:text-primary-600 disabled:text-gray-500 [&_path]:fill-primary-500 [&_path]:hover:fill-primary-600 [&_path]:disabled:fill-gray-500',
+    'flex text-xxs text-nym-green-primary hover:text-nym-green-dark disabled:text-gray-500 [&_path]:fill-nym-green-primary [&_path]:hover:fill-nym-green-dark [&_path]:disabled:fill-gray-500',
 };

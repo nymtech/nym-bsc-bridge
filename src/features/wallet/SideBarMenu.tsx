@@ -75,7 +75,7 @@ export function SideBarMenu({
           </button>
         )}
         <div className="flex h-full w-full flex-col overflow-y-auto">
-          <div className="w-full rounded-t-md bg-primary-500 px-3.5 py-2 text-base font-normal tracking-wider text-white">
+          <div className="w-full rounded-t-md bg-nym-green-primary px-3.5 py-2 text-base font-normal tracking-wider text-black">
             Connected Wallets
           </div>
           <AccountList
@@ -85,7 +85,7 @@ export function SideBarMenu({
             className="px-3 py-3"
             chainName={originChainName}
           />
-          <div className="mb-4 w-full bg-primary-500 px-3.5 py-2 text-base font-normal tracking-wider text-white">
+          <div className="mb-4 w-full bg-nym-green-primary px-3.5 py-2 text-base font-normal tracking-wider text-black">
             Transfer History
           </div>
           <div className="flex grow flex-col px-3.5">

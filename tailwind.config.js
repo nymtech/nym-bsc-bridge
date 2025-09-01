@@ -22,7 +22,7 @@ module.exports = {
         white: '#FFFFFF',
         // Nym Primary Greens
         'nym-green': {
-          primary: '#09B051',
+          primary: '#07FF94',
           dark: '#013218',
           light: '#7CF9B1',
           lighter: '#D9FFE8',

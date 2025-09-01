@@ -508,7 +508,7 @@ function ButtonSection({
           color="primary"
           onClick={onEdit}
           className="px-6 py-1.5"
-          icon={<ChevronIcon direction="w" width={10} height={6} color={Color.white} />}
+          icon={<ChevronIcon direction="w" width={10} height={6} color={Color.black} />}
         >
           <span>Edit</span>
         </SolidButton>
@@ -552,7 +552,7 @@ function MaxButton({ balance, disabled }: { balance?: TokenAmount; disabled?: bo
     >
       {isLoading ? (
         <div className="flex items-center">
-          <SpinnerIcon className="h-5 w-5" color="white" />
+          <SpinnerIcon className="h-5 w-5" color="black" />
         </div>
       ) : (
         'Max'

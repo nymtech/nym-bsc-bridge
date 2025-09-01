@@ -35,7 +35,7 @@ export function AddWarpConfigModal({ isOpen, close }: { isOpen: boolean; close: 
       close={close}
       panelClassname="px-4 py-3 max-w-lg flex flex-col items-center gap-2"
     >
-      <h2 className="text-center text-primary-500">Add Warp Route Configs</h2>
+      <h2 className="text-center text-nym-green-primary">Add Warp Route Configs</h2>
       <p className="text-xs">
         Add warp route configs, like those from the Hyperlane CLI. Note, these routes will be
         available only in your own browser.
@@ -88,9 +88,9 @@ function Form({ onAdd }: { onAdd: (warpCoreConfig: WarpCoreConfig) => void }) {
       </div>
       <Button
         onClick={onClickAdd}
-        className="w-full gap-1 bg-accent-500 px-3 py-1.5 text-sm text-white"
+        className="w-full gap-1 bg-nym-green-primary px-3 py-1.5 text-sm text-black"
       >
-        <PlusIcon width={20} height={20} color={Color.white} />
+        <PlusIcon width={20} height={20} color={Color.black} />
         <span>Add Config</span>
       </Button>
     </>

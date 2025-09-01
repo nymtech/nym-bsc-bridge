@@ -66,14 +66,14 @@ export function SimpleChainSwitcher({
             type="button"
             onClick={onSwapChains}
             disabled={disabled}
-            className={`p-3 rounded-full transition-all duration-200 border-0 outline-none focus:outline-none flex-shrink-0 ${
+            className={`p-3 rounded-full transition-all duration-200 border outline-none focus:outline-none flex-shrink-0 ${
               disabled
-                ? 'bg-gray-200 cursor-not-allowed'
-                : 'bg-nym-green-primary hover:bg-nym-green-dark hover:shadow-md active:scale-95'
+                ? 'bg-gray-200 border-gray-300 cursor-not-allowed'
+                : 'bg-nym-green-primary border-transparent hover:border-nym-green-dark hover:shadow-md active:scale-95'
             }`}
             title="Swap chains"
           >
-            <SwapIcon width={20} height={20} color="white" />
+            <SwapIcon width={20} height={20} color="black" />
           </button>
         </div>
 

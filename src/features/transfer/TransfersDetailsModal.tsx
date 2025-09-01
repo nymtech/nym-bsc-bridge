@@ -1,15 +1,15 @@
 import { ProtocolType } from '@hyperlane-xyz/utils';
 import {
-  CopyButton,
-  MessageStatus,
-  MessageTimeline,
-  Modal,
-  SpinnerIcon,
-  useAccountForChain,
-  useMessageTimeline,
-  useTimeout,
-  useWalletDetails,
-  WideChevronIcon,
+    CopyButton,
+    MessageStatus,
+    MessageTimeline,
+    Modal,
+    SpinnerIcon,
+    useAccountForChain,
+    useMessageTimeline,
+    useTimeout,
+    useWalletDetails,
+    WideChevronIcon,
 } from '@hyperlane-xyz/widgets';
 import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -25,10 +25,10 @@ import { getChainDisplayName, hasPermissionlessChain } from '../chains/utils';
 import { tryFindToken, useWarpCore } from '../tokens/hooks';
 import { TransferContext, TransferStatus } from './types';
 import {
-  getIconByTransferStatus,
-  getTransferStatusLabel,
-  isTransferFailed,
-  isTransferSent,
+    getIconByTransferStatus,
+    getTransferStatusLabel,
+    isTransferFailed,
+    isTransferSent,
 } from './utils';
 
 export function TransfersDetailsModal({
@@ -117,7 +117,7 @@ export function TransfersDetailsModal({
           <h2 className="font-medium text-gray-600">{date}</h2>
           <div className="flex items-center font-medium">
             {isSent ? (
-              <h3 className="text-primary-500">Sent</h3>
+              <h3 className="text-nym-green-primary">Sent</h3>
             ) : (
               <h3 className="text-red-500">Failed</h3>
             )}
@@ -132,7 +132,7 @@ export function TransfersDetailsModal({
         </div>
       )}
 
-      <div className="mt-4 flex w-full items-center justify-center rounded-full bg-primary-200 p-3">
+      <div className="mt-4 flex w-full items-center justify-center rounded-full bg-nym-green-lighter p-3">
         <TokenIcon token={token} size={30} />
         <div className="items ml-2 flex items-baseline">
           <span className="text-xl font-medium">{amount}</span>
