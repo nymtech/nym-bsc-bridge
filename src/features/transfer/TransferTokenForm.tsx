@@ -132,10 +132,10 @@ function KeplrChainSuggestion() {
         if (!window.keplr) return;
 
         const chainId = 'nyx'; // Nym chain ID
-        const _chainInfo = await window.keplr.getChainInfoWithoutEndpoints(chainId);
+        await window.keplr.getChainInfoWithoutEndpoints(chainId);
         // If we get here without error, the chain exists
         setShowSuggestion(false);
-      } catch (_error) {
+      } catch {
         // Chain not found, show suggestion
         setShowSuggestion(true);
       }
