@@ -13,14 +13,17 @@ export function ConnectWalletButton() {
     setIsSideBarOpen: s.setIsSideBarOpen,
   }));
 
+  // For Cosmos wallets, prioritize Nym chain for address display consistency
+  const chainName = multiProvider.tryGetChainMetadata('nym') ? 'nym' : originChainName;
+
   return (
     <ConnectWalletButtonInner
       multiProvider={multiProvider}
       onClickWhenUnconnected={() => setShowEnvSelectModal(true)}
       onClickWhenConnected={() => setIsSideBarOpen(true)}
-      className="rounded-lg bg-nym-green-primary text-black"
+      className="rounded-lg bg-white text-black border border-gray-200 hover:border-gray-300 transition-colors"
       countClassName="bg-nym-green-dark"
-      chainName={originChainName}
+      chainName={chainName}
     />
   );
 }

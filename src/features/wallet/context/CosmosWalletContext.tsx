@@ -4,7 +4,6 @@ import { wallets as cosmostationWallets } from '@cosmos-kit/cosmostation';
 import { wallets as keplrWallets } from '@cosmos-kit/keplr';
 import { wallets as leapWallets } from '@cosmos-kit/leap';
 import { ChainProvider } from '@cosmos-kit/react';
-import { cosmoshub } from '@hyperlane-xyz/registry';
 import { MultiProtocolProvider } from '@hyperlane-xyz/sdk';
 import { getCosmosKitChainConfigs } from '@hyperlane-xyz/widgets';
 import '@interchain-ui/react/styles';
@@ -23,8 +22,19 @@ const theme = extendTheme({
 export function CosmosWalletContext({ children }: PropsWithChildren<unknown>) {
   const chainMetadata = useMultiProvider().metadata;
   const { chains, assets } = useMemo(() => {
-    const multiProvider = new MultiProtocolProvider({ ...chainMetadata, cosmoshub });
-    return getCosmosKitChainConfigs(multiProvider);
+    // Use only our configured chains, prioritizing Nym
+    const multiProvider = new MultiProtocolProvider(chainMetadata);
+    const cosmosKitConfigs = getCosmosKitChainConfigs(multiProvider);
+
+    // Ensure Nym is the default chain for Cosmos wallets
+    const nymChain = cosmosKitConfigs.chains.find(chain => chain.chain_name === 'nym');
+    if (nymChain) {
+      // Move Nym to the front of the chains array
+      const otherChains = cosmosKitConfigs.chains.filter(chain => chain.chain_name !== 'nym');
+      cosmosKitConfigs.chains = [nymChain, ...otherChains];
+    }
+
+    return cosmosKitConfigs;
   }, [chainMetadata]);
   const leapWithoutSnap = leapWallets.filter((wallet) => !wallet.walletName.includes('snap'));
   // TODO replace Chakra here with a custom modal for ChainProvider
@@ -47,16 +57,28 @@ export function CosmosWalletContext({ children }: PropsWithChildren<unknown>) {
           },
         }}
         signerOptions={{
-          signingCosmwasm: () => {
+          signingCosmwasm: (chain) => {
+            // Use Nym-specific gas price for Nym chain
+            const chainName = typeof chain === 'string' ? chain : chain.chain_name;
+            if (chainName === 'nym') {
+              return {
+                gasPrice: GasPrice.fromString('0.025unym'),
+              };
+            }
             return {
-              // TODO cosmos get gas price from registry or RPC
               gasPrice: GasPrice.fromString('0.03token'),
             };
           },
-          signingStargate: () => {
+          signingStargate: (chain) => {
+            // Use Nym-specific gas price for Nym chain
+            const chainName = typeof chain === 'string' ? chain : chain.chain_name;
+            if (chainName === 'nym') {
+              return {
+                gasPrice: GasPrice.fromString('0.025unym'),
+              };
+            }
             return {
-              // TODO cosmos get gas price from registry or RPC
-              gasPrice: GasPrice.fromString('0.2tia'),
+              gasPrice: GasPrice.fromString('0.03token'),
             };
           },
         }}

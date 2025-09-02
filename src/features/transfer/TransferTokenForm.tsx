@@ -17,7 +17,8 @@ import {
   getAccountAddressAndPubKey,
   useAccountAddressForChain,
   useAccounts,
-  useModal
+  useModal,
+  useWatchAsset
 } from '@hyperlane-xyz/widgets';
 import BigNumber from 'bignumber.js';
 import { Form, Formik, useFormikContext } from 'formik';
@@ -64,6 +65,168 @@ import { useRecipientBalanceWatcher } from './useBalanceWatcher';
 import { useFeeQuotes } from './useFeeQuotes';
 import { useTokenTransfer } from './useTokenTransfer';
 import { isSmartContract } from './utils';
+
+// Component for adding NYM token to wallet
+function AddTokenToWallet({ chainName }: { chainName: string }) {
+  const multiProvider = useMultiProvider();
+  const warpCore = useWarpCore();
+  const token = warpCore.tokens.find(t => t.chainName === chainName);
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Get watch asset functions
+  const watchAsset = useWatchAsset(multiProvider);
+
+  const handleAddToken = async () => {
+    if (!token) return;
+
+    setIsLoading(true);
+    try {
+      const { addAsset } = watchAsset[token.protocol];
+      if (!addAsset) {
+        throw new Error('Add asset function not available for this protocol');
+      }
+
+      await addAsset(token, chainName);
+      toast.success('NYM token added to wallet!');
+    } catch  {
+      toast.error('Failed to add NYM token to wallet');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Only show button for Ethereum-compatible chains (BSC)
+  if (!token || chainName !== SUPPORTED_CHAINS.BSC) return null;
+
+  return (
+    <button
+      onClick={handleAddToken}
+      disabled={isLoading}
+      className="inline-flex items-center px-3 py-1 text-xs font-medium text-blue-600 hover:text-blue-800 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {isLoading ? (
+        <>
+          <SpinnerIcon className="w-3 h-3 mr-1" color="currentColor" />
+          Adding...
+        </>
+      ) : (
+        <>
+          <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+          </svg>
+          Add NYM to wallet
+        </>
+      )}
+    </button>
+  );
+}
+
+// Component for suggesting Nym chain to Keplr
+function KeplrChainSuggestion() {
+  const [showSuggestion, setShowSuggestion] = useState(false);
+
+  useEffect(() => {
+    // Check if Keplr is available and if Nym chain is not added
+    const checkKeplrAndChain = async () => {
+      try {
+        if (!window.keplr) return;
+
+        const chainId = 'nyx'; // Nym chain ID
+        const _chainInfo = await window.keplr.getChainInfoWithoutEndpoints(chainId);
+        // If we get here without error, the chain exists
+        setShowSuggestion(false);
+      } catch (_error) {
+        // Chain not found, show suggestion
+        setShowSuggestion(true);
+      }
+    };
+
+    checkKeplrAndChain();
+  }, []);
+
+  const handleAddChain = async () => {
+    try {
+      if (!window.keplr) {
+        toast.error('Keplr wallet not found. Please install Keplr extension.');
+        return;
+      }
+
+      const chainInfo = {
+        chainId: 'nyx',
+        chainName: 'Nym',
+        rpc: 'https://rpc.nymtech.net:443',
+        rest: 'https://api.nymtech.net',
+        bip44: {
+          coinType: 118,
+        },
+        bech32Config: {
+          bech32PrefixAccAddr: 'n',
+          bech32PrefixAccPub: 'npub',
+          bech32PrefixValAddr: 'nvaloper',
+          bech32PrefixValPub: 'nvaloperpub',
+          bech32PrefixConsAddr: 'nvalcons',
+          bech32PrefixConsPub: 'nvalconspub',
+        },
+        currencies: [
+          {
+            coinDenom: 'NYM',
+            coinMinimalDenom: 'unym',
+            coinDecimals: 6,
+            coinGeckoId: 'nym',
+          },
+        ],
+        feeCurrencies: [
+          {
+            coinDenom: 'NYM',
+            coinMinimalDenom: 'unym',
+            coinDecimals: 6,
+            coinGeckoId: 'nym',
+          },
+        ],
+        stakeCurrency: {
+          coinDenom: 'NYM',
+          coinMinimalDenom: 'unym',
+          coinDecimals: 6,
+          coinGeckoId: 'nym',
+        },
+      };
+
+      await window.keplr.experimentalSuggestChain(chainInfo);
+      toast.success('Nym chain added to Keplr!');
+      setShowSuggestion(false);
+    } catch {
+      toast.error('Failed to add Nym chain to Keplr');
+    }
+  };
+
+  if (!showSuggestion) return null;
+
+  return (
+    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-2">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center space-x-2">
+          <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="text-sm text-blue-800">Add Nym Network to Keplr</span>
+        </div>
+        <button
+          onClick={handleAddChain}
+          className="px-3 py-1 text-xs font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors duration-200"
+        >
+          Add Chain
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Type declaration for Keplr
+declare global {
+  interface Window {
+    keplr?: any;
+  }
+}
 
 export function TransferTokenForm() {
   const multiProvider = useMultiProvider();
@@ -204,12 +367,19 @@ function ChainSelectSection({ isReview }: { isReview: boolean }) {
   };
 
   return (
-    <SimpleChainSwitcher
-      origin={values.origin}
-      destination={values.destination}
-      onSwapChains={onSwapChains}
-      disabled={isReview}
-    />
+    <div className="space-y-3">
+      <SimpleChainSwitcher
+        origin={values.origin}
+        destination={values.destination}
+        onSwapChains={onSwapChains}
+        disabled={isReview}
+      />
+      {!isReview && (
+        <div className="flex justify-center">
+          <AddTokenToWallet chainName={values.origin} />
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -712,11 +882,16 @@ function ReviewDetails({
 function WarningBanners() {
   const { values } = useFormikContext<TransferFormValues>();
   return (
-    // Max height to prevent double padding if multiple warnings are visible
-    <div className="max-h-10">
-      <ChainWalletWarning origin={values.origin} />
-      <ChainConnectionWarning origin={values.origin} destination={values.destination} />
-      <WalletConnectionWarning origin={values.origin} />
+    <div className="space-y-2">
+      {/* Standard warnings with max height */}
+      <div className="max-h-10">
+        <ChainWalletWarning origin={values.origin} />
+        <ChainConnectionWarning origin={values.origin} destination={values.destination} />
+        <WalletConnectionWarning origin={values.origin} />
+      </div>
+
+      {/* Keplr chain suggestion - only show if destination is Nym */}
+      {values.destination === SUPPORTED_CHAINS.NYM && <KeplrChainSuggestion />}
     </div>
   );
 }

@@ -37,6 +37,9 @@ export function SideBarMenu({
     originChainName: s.originChainName,
   }));
 
+  // For Cosmos wallets, prioritize Nym chain for address display consistency
+  const chainName = multiProvider.tryGetChainMetadata('nym') ? 'nym' : originChainName;
+
   useEffect(() => {
     if (!didMountRef.current) {
       didMountRef.current = true;
@@ -83,7 +86,7 @@ export function SideBarMenu({
             onClickConnectWallet={onClickConnectWallet}
             onCopySuccess={onCopySuccess}
             className="px-3 py-3"
-            chainName={originChainName}
+            chainName={chainName}
           />
           <div className="mb-4 w-full bg-nym-green-primary px-3.5 py-2 text-base font-normal tracking-wider text-black">
             Transfer History
