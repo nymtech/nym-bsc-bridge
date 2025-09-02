@@ -24,6 +24,7 @@ import BigNumber from 'bignumber.js';
 import { Form, Formik, useFormikContext } from 'formik';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
+import { InsufficientBalanceBanner } from '../../components/banner/InsufficientBalanceBanner';
 import { RecipientWarningBanner } from '../../components/banner/RecipientWarningBanner';
 import { ConnectAwareSubmitButton } from '../../components/buttons/ConnectAwareSubmitButton';
 import { SolidButton } from '../../components/buttons/SolidButton';
@@ -257,8 +258,15 @@ export function TransferTokenForm() {
   // Modal for transaction tracking
   const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
 
+  // State for insufficient balance banner
+  const [insufficientBalance, setInsufficientBalance] = useState<{
+    requiredAmount: string;
+    currentBalance: string;
+    tokenSymbol: string;
+  } | null>(null);
+
   const validate = async (values: TransferFormValues) => {
-    const [result, overrideToken] = await validateForm(
+    const [result, overrideToken, balanceError] = await validateForm(
       warpCore,
       values,
       accounts,
@@ -268,6 +276,10 @@ export function TransferTokenForm() {
     // Unless this is done, the review and the transfer would contain
     // the selected token rather than collateral with highest balance
     setRouteTokenOverride(overrideToken);
+
+    // Handle insufficient balance banner
+    setInsufficientBalance(balanceError);
+
     return result;
   };
 
@@ -288,6 +300,11 @@ export function TransferTokenForm() {
     if (!originChainName) setOriginChainName(initialValues.origin);
   }, [initialValues.origin, originChainName, setOriginChainName]);
 
+  // Clear insufficient balance when form values change
+  useEffect(() => {
+    setInsufficientBalance(null);
+  }, [initialValues.origin, initialValues.destination, initialValues.amount]);
+
   return (
     <Formik<TransferFormValues>
       initialValues={initialValues}
@@ -307,7 +324,18 @@ export function TransferTokenForm() {
             </div>
           </div>
           <RecipientSection isReview={isReview} />
+
           <ReviewDetails visible={isReview} routeOverrideToken={routeOverrideToken} />
+
+          {insufficientBalance && (
+            <div className="bg-amber-400 px-4 text-sm py-2 rounded-lg">
+              <InsufficientBalanceBanner
+                requiredAmount={insufficientBalance.requiredAmount}
+                currentBalance={insufficientBalance.currentBalance}
+                tokenSymbol={insufficientBalance.tokenSymbol}
+              />
+            </div>
+          )}
           <ButtonSection
             isReview={isReview}
             isValidating={isValidating}
@@ -316,6 +344,7 @@ export function TransferTokenForm() {
             routeOverrideToken={routeOverrideToken}
             warpCore={warpCore}
             setIsTrackingModalOpen={setIsTrackingModalOpen}
+            insufficientBalance={insufficientBalance}
           />
           <RecipientConfirmationModal
             isOpen={isConfirmationModalOpen}
@@ -509,6 +538,7 @@ function ButtonSection({
   routeOverrideToken,
   warpCore,
   setIsTrackingModalOpen,
+  insufficientBalance,
 }: {
   isReview: boolean;
   isValidating: boolean;
@@ -517,6 +547,7 @@ function ButtonSection({
   routeOverrideToken: Token | null;
   warpCore: WarpCore;
   setIsTrackingModalOpen: (open: boolean) => void;
+  insufficientBalance: { requiredAmount: string; currentBalance: string; tokenSymbol: string } | null;
 }) {
   const { values } = useFormikContext<TransferFormValues>();
   const multiProvider = useMultiProvider();
@@ -649,7 +680,7 @@ function ButtonSection({
           />
         </div>
         <ConnectAwareSubmitButton
-          disabled={!addressConfirmed}
+          disabled={!addressConfirmed || !!insufficientBalance}
           chainName={values.origin}
           text={isValidating ? 'Validating...' : 'Continue'}
           classes="mt-4 px-3 py-1.5"
@@ -683,7 +714,7 @@ function ButtonSection({
           <span>Edit</span>
         </SolidButton>
         <SolidButton
-          disabled={!addressConfirmed}
+          disabled={!addressConfirmed || !!insufficientBalance}
           type="button"
           color="accent"
           onClick={triggerTransactionsHandler}
@@ -937,7 +968,7 @@ async function validateForm(
   values: TransferFormValues,
   accounts: Record<ProtocolType, AccountInfo>,
   routerAddressesByChainMap: Record<ChainName, Set<string>>,
-): Promise<[Record<string, string> | null, Token | null]> {
+): Promise<[Record<string, string> | null, Token | null, { requiredAmount: string; currentBalance: string; tokenSymbol: string } | null]> {
   // returns a tuple, where first value is validation result
   // and second value is token override
   try {
@@ -950,7 +981,7 @@ async function validateForm(
       token = warpCore.tokens[0];
     }
 
-    if (!token) return [{ token: 'No tokens available for transfer' }, null];
+    if (!token) return [{ token: 'No tokens available for transfer' }, null, null];
 
     // For Nym bridge, we have a simple validation since we know the expected connections
     let destinationToken = token.getConnectionForChain(destination)?.token;
@@ -995,14 +1026,14 @@ async function validateForm(
       const errorMsg = `Token ${token.addressOrDenom} on ${token.chainName} has no connection to ${destination}`;
       const availableConnections = token.connections?.map(c => c.token.chainName) || [];
       logger.error(errorMsg, new Error('No destination token'), { availableConnections });
-      return [{ token: `Token not available on ${destination} chain` }, null];
+      return [{ token: `Token not available on ${destination} chain` }, null, null];
     }
 
     if (
       objKeys(routerAddressesByChainMap).includes(destination) &&
       routerAddressesByChainMap[destination].has(recipient)
     ) {
-      return [{ recipient: 'Warp Route address is not valid as recipient' }, null];
+      return [{ recipient: 'Warp Route address is not valid as recipient' }, null, null];
     }
 
     const transferToken = await getTransferToken(warpCore, token, destinationToken);
@@ -1015,14 +1046,51 @@ async function validateForm(
           amount: `Transfer limit is ${fromWei(multiCollateralLimit.toString(), token.decimals)} ${token.symbol}`,
         },
         null,
+        null,
       ];
     }
 
+    // Check if user has sufficient balance including fees
     const { address, publicKey: senderPubKey } = getAccountAddressAndPubKey(
       warpCore.multiProvider,
       origin,
       accounts,
     );
+
+    if (address) {
+      try {
+        // Get user's current balance
+        const userBalance = await token.getBalance(warpCore.multiProvider, address);
+        if (userBalance) {
+          // Get fee quotes to calculate total required amount
+          const feeQuotes = await warpCore.estimateTransferRemoteFees({
+            originToken: transferToken,
+            destination,
+            sender: address,
+            senderPubKey: await senderPubKey,
+          });
+
+          if (feeQuotes) {
+            // Calculate total required amount: transfer amount + interchain fees
+            const totalRequiredWei = BigInt(amountWei) + feeQuotes.interchainQuote.amount;
+
+            if (userBalance.amount < totalRequiredWei) {
+              const requiredAmount = fromWei(totalRequiredWei.toString(), token.decimals);
+              const currentBalance = fromWei(userBalance.amount.toString(), token.decimals);
+
+              return [null, null, {
+                requiredAmount: parseFloat(requiredAmount).toFixed(4),
+                currentBalance: parseFloat(currentBalance).toFixed(4),
+                tokenSymbol: token.symbol
+              }];
+            }
+          }
+        }
+      } catch (balanceError) {
+        logger.warn('Error checking balance for fee validation', balanceError);
+        // Continue with normal validation if balance check fails
+      }
+    }
 
     const result = await warpCore.validateTransfer({
       originTokenAmount: transferToken.amount(amountWei),
@@ -1032,11 +1100,11 @@ async function validateForm(
       senderPubKey: await senderPubKey,
     });
 
-    if (!isNullish(result)) return [result, null];
+    if (!isNullish(result)) return [result, null, null];
 
-    if (transferToken.addressOrDenom === token.addressOrDenom) return [null, null];
+    if (transferToken.addressOrDenom === token.addressOrDenom) return [null, null, null];
 
-    return [null, transferToken];
+    return [null, transferToken, null];
   } catch (error: any) {
     logger.error('Error validating form', error);
     let errorMsg = errorToString(error, 40);
@@ -1044,7 +1112,7 @@ async function validateForm(
     if (insufficientFundsErrMsg.test(fullError) || emptyAccountErrMsg.test(fullError)) {
       errorMsg = 'Insufficient funds for gas fees';
     }
-    return [{ form: errorMsg }, null];
+    return [{ form: errorMsg }, null, null];
   }
 }
 
