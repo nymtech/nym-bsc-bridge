@@ -344,7 +344,6 @@ export function TransferTokenForm() {
             routeOverrideToken={routeOverrideToken}
             warpCore={warpCore}
             setIsTrackingModalOpen={setIsTrackingModalOpen}
-            insufficientBalance={insufficientBalance}
           />
           <RecipientConfirmationModal
             isOpen={isConfirmationModalOpen}
@@ -538,7 +537,6 @@ function ButtonSection({
   routeOverrideToken,
   warpCore,
   setIsTrackingModalOpen,
-  insufficientBalance,
 }: {
   isReview: boolean;
   isValidating: boolean;
@@ -547,7 +545,6 @@ function ButtonSection({
   routeOverrideToken: Token | null;
   warpCore: WarpCore;
   setIsTrackingModalOpen: (open: boolean) => void;
-  insufficientBalance: { requiredAmount: string; currentBalance: string; tokenSymbol: string } | null;
 }) {
   const { values } = useFormikContext<TransferFormValues>();
   const multiProvider = useMultiProvider();
@@ -680,7 +677,7 @@ function ButtonSection({
           />
         </div>
         <ConnectAwareSubmitButton
-          disabled={!addressConfirmed || !!insufficientBalance}
+          disabled={!addressConfirmed}
           chainName={values.origin}
           text={isValidating ? 'Validating...' : 'Continue'}
           classes="mt-4 px-3 py-1.5"
@@ -714,7 +711,7 @@ function ButtonSection({
           <span>Edit</span>
         </SolidButton>
         <SolidButton
-          disabled={!addressConfirmed || !!insufficientBalance}
+          disabled={!addressConfirmed}
           type="button"
           color="accent"
           onClick={triggerTransactionsHandler}
@@ -1078,7 +1075,9 @@ async function validateForm(
               const requiredAmount = fromWei(totalRequiredWei.toString(), token.decimals);
               const currentBalance = fromWei(userBalance.amount.toString(), token.decimals);
 
-              return [null, null, {
+              return [{
+                _insufficientBalance: 'Insufficient balance prevents submission'
+              }, null, {
                 requiredAmount: parseFloat(requiredAmount).toFixed(4),
                 currentBalance: parseFloat(currentBalance).toFixed(4),
                 tokenSymbol: token.symbol

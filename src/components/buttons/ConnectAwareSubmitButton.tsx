@@ -28,8 +28,13 @@ export function ConnectAwareSubmitButton<FormValues = any>({
 
   const { errors, setErrors, touched, setTouched } = useFormikContext<FormValues>();
 
-  const hasError = Object.keys(touched).length > 0 && Object.keys(errors).length > 0;
-  const firstError = `${Object.values(errors)[0]}` || 'Unknown error';
+  // Filter out the _insufficientBalance error as it's handled by the banner
+  const filteredErrors = Object.fromEntries(
+    Object.entries(errors).filter(([key]) => key !== '_insufficientBalance')
+  );
+
+  const hasError = Object.keys(touched).length > 0 && Object.keys(filteredErrors).length > 0;
+  const firstError = `${Object.values(filteredErrors)[0]}` || 'Unknown error';
 
   const color = hasError ? 'red' : 'accent';
   const content = hasError ? firstError : isAccountReady ? text : 'Connect wallet';
