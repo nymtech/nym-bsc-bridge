@@ -52,7 +52,7 @@ export function CosmosWalletContext({ children }: PropsWithChildren<unknown>) {
               name: APP_NAME,
               description: APP_DESCRIPTION,
               url: APP_URL,
-              icons: ['/nym.ico', '/android-chrome-192x192.png'],
+              icons: ['https://bridge.nym.com/nym.ico', 'https://bridge.nym.com/android-chrome-192x192.png'],
             },
           },
         }}

@@ -39,8 +39,8 @@ function initWagmi(multiProvider: MultiProtocolProvider) {
       appName: APP_NAME, 
       projectId: config.walletConnectProjectId,
       appDescription: 'Bridge NYM tokens between chains',
-      appUrl: 'https://nym-bridge.vercel.app',
-      appIcon: '/nym.ico'
+      appUrl: 'https://bridge.nym.com',
+      appIcon: 'https://bridge.nym.com/nym.ico'
     },
   );
 

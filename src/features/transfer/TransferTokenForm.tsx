@@ -17,6 +17,7 @@ import {
   getAccountAddressAndPubKey,
   useAccountAddressForChain,
   useAccounts,
+  useEthereumAccount,
   useModal,
   useWatchAsset
 } from '@hyperlane-xyz/widgets';
@@ -74,6 +75,10 @@ function AddTokenToWallet({ chainName }: { chainName: string }) {
   const token = warpCore.tokens.find(t => t.chainName === chainName);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Check if EVM wallet is connected
+  const evmAccount = useEthereumAccount(multiProvider);
+  const isEvmWalletConnected = evmAccount.addresses.length > 0;
+
   // Get watch asset functions
   const watchAsset = useWatchAsset(multiProvider);
 
@@ -96,8 +101,8 @@ function AddTokenToWallet({ chainName }: { chainName: string }) {
     }
   };
 
-  // Only show button for Ethereum-compatible chains (BSC)
-  if (!token || chainName !== SUPPORTED_CHAINS.BSC) return null;
+  // Only show button for Ethereum-compatible chains (BSC) and when EVM wallet is connected
+  if (!token || chainName !== SUPPORTED_CHAINS.BSC || !isEvmWalletConnected) return null;
 
   return (
     <button

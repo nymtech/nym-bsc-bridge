@@ -124,7 +124,7 @@ export function TransactionTrackingModal({ isOpen, onClose }: TransactionTrackin
               <div className="flex h-16 w-16 items-center justify-center rounded-full bg-nym-green-primary bg-opacity-10 mx-auto mb-4">
                 <span className="text-2xl text-nym-green-primary">✓</span>
               </div>
-              <h3 className="text-lg font-medium text-nym-green-primary mb-2">Transfer Complete!</h3>
+              <h3 className="text-lg font-semibold mb-2">Transfer Complete!</h3>
               <p className="text-sm text-nym-gray-medium">
                 Your NYM tokens have been successfully transferred.
               </p>
