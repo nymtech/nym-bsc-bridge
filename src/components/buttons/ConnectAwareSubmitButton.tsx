@@ -33,7 +33,7 @@ export function ConnectAwareSubmitButton<FormValues = any>({
     Object.entries(errors).filter(([key]) => key !== '_insufficientBalance')
   );
 
-  const hasError = Object.keys(touched).length > 0 && Object.keys(filteredErrors).length > 0;
+  const hasError = Object.keys(filteredErrors).length > 0;
   const firstError = `${Object.values(filteredErrors)[0]}` || 'Unknown error';
 
   const color = hasError ? 'red' : 'accent';

@@ -37,8 +37,8 @@ export function SolidButton(
     baseColors = 'bg-nym-green-primary text-black border-transparent';
     onHover = 'hover:border-nym-green-dark';
   } else if (color === 'red') {
-    baseColors = 'bg-nym-green-primary text-black border-transparent';
-    onHover = 'hover:border-nym-green-dark';
+    baseColors = 'bg-red-500 text-white border-transparent';
+    onHover = 'hover:bg-red-600';
   } else if (color === 'white') {
     baseColors = 'bg-white text-black border-transparent';
     onHover = 'hover:border-nym-green-primary';

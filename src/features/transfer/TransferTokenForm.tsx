@@ -6,6 +6,7 @@ import {
   errorToString,
   fromWei,
   isNullish,
+  isValidAddress,
   isValidAddressEvm,
   objKeys,
   toWei,
@@ -25,6 +26,7 @@ import BigNumber from 'bignumber.js';
 import { Form, Formik, useFormikContext } from 'formik';
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
+import { CexWarningPopup } from '../../components/banner/CexWarningPopup';
 import { InsufficientBalanceBanner } from '../../components/banner/InsufficientBalanceBanner';
 import { RecipientWarningBanner } from '../../components/banner/RecipientWarningBanner';
 import { ConnectAwareSubmitButton } from '../../components/buttons/ConnectAwareSubmitButton';
@@ -452,7 +454,7 @@ function AmountSection({ isReview }: { isReview: boolean }) {
 }
 
 function RecipientSection({ isReview }: { isReview: boolean }) {
-  const { values } = useFormikContext<TransferFormValues>();
+  const { values, setFieldValue } = useFormikContext<TransferFormValues>();
   const { balance: destinationBalance, isLoading: destLoading, isError: destError } = useDestinationBalance(values);
   const { balance: recipientBalance, isLoading: _recipientLoading, isError: _recipientError } = useRecipientBalance({
     destination: values.destination,
@@ -460,6 +462,43 @@ function RecipientSection({ isReview }: { isReview: boolean }) {
     tokenIndex: values.tokenIndex
   });
   useRecipientBalanceWatcher(values.recipient, recipientBalance);
+
+  // State for managing CEX warning popup
+  const [isFieldFocused, setIsFieldFocused] = useState(false);
+  const [isManualInput, setIsManualInput] = useState(false);
+  const [showCexWarning, setShowCexWarning] = useState(false);
+
+  // Check if we should show the CEX warning (for both BSC and Nym destinations)
+  const shouldShowCexWarning = (values.destination === SUPPORTED_CHAINS.BSC || values.destination === SUPPORTED_CHAINS.NYM) 
+    && isFieldFocused && isManualInput && !isReview;
+
+  // Update warning visibility
+  useEffect(() => {
+    setShowCexWarning(shouldShowCexWarning);
+  }, [shouldShowCexWarning]);
+
+  // Handle field focus
+  const handleFieldFocus = () => {
+    setIsFieldFocused(true);
+    setIsManualInput(true);
+  };
+
+  // Handle field blur
+  const handleFieldBlur = () => {
+    setIsFieldFocused(false);
+    // Keep manual input flag until field is cleared or Self button is used
+  };
+
+  // Handle field change to detect manual input
+  const handleFieldChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.value;
+    setFieldValue('recipient', newValue);
+    
+    // If field is being cleared, reset manual input flag
+    if (!newValue) {
+      setIsManualInput(false);
+    }
+  };
 
   // Dynamic placeholder based on destination chain
   const getPlaceholderForChain = (chainName: string) => {
@@ -494,8 +533,15 @@ function RecipientSection({ isReview }: { isReview: boolean }) {
           placeholder={getPlaceholderForChain(values.destination)}
           className="w-full"
           disabled={isReview}
+          onFocus={handleFieldFocus}
+          onBlur={handleFieldBlur}
+          onChange={handleFieldChange}
         />
-        <SelfButton disabled={isReview} />
+        <SelfButton disabled={isReview} onSelfClick={() => setIsManualInput(false)} />
+        <CexWarningPopup 
+          isVisible={showCexWarning} 
+          onClose={() => setShowCexWarning(false)} 
+        />
       </div>
     </div>
   );
@@ -764,16 +810,20 @@ function MaxButton({ balance, disabled }: { balance?: TokenAmount; disabled?: bo
   );
 }
 
-function SelfButton({ disabled }: { disabled?: boolean }) {
+function SelfButton({ disabled, onSelfClick }: { disabled?: boolean; onSelfClick?: () => void }) {
   const { values, setFieldValue } = useFormikContext<TransferFormValues>();
   const multiProvider = useMultiProvider();
   const chainDisplayName = useChainDisplayName(values.destination);
   const address = useAccountAddressForChain(multiProvider, values.destination);
   const onClick = () => {
     if (disabled) return;
-    if (address) setFieldValue('recipient', address);
-    else
+    if (address) {
+      setFieldValue('recipient', address);
+      // Call the callback to indicate this was a "Self" button click, not manual input
+      onSelfClick?.();
+    } else {
       toast.warn(`No account found for for chain ${chainDisplayName}, is your wallet connected?`);
+    }
   };
   return (
     <SolidButton
@@ -975,6 +1025,68 @@ async function validateForm(
   // and second value is token override
   try {
     const { origin, destination, tokenIndex, amount, recipient } = values;
+
+    const errors: Record<string, string> = {};
+
+    // Validate amount
+    const amountStr = String(amount || '').trim();
+    if (!amountStr || amountStr === '') {
+      errors.amount = 'Amount is required';
+    } else {
+      const numericAmount = parseFloat(amountStr);
+      if (isNaN(numericAmount) || numericAmount <= 0) {
+        errors.amount = 'Amount must be a positive number';
+      } else {
+        // Nym token has 6 decimals
+        const decimalPlaces = (amountStr.split('.')[1] || '').length;
+        if (decimalPlaces > 6) {
+          errors.amount = 'Amount has too many decimal places (max 6)';
+        }
+
+        // Check for very small amounts that might cause issues
+        if (numericAmount < 0.01) {
+          errors.amount = 'Amount is too small (minimum 0.01)';
+        }
+      }
+    }
+
+    // Validate recipient address
+    const recipientStr = String(recipient || '').trim();
+    if (!recipientStr || recipientStr === '') {
+      errors.recipient = 'Recipient address is required';
+    } else {
+      // Get the protocol for the destination chain to validate address format
+      const destinationChainMetadata = warpCore.multiProvider.getChainMetadata(destination);
+      const protocol = destinationChainMetadata.protocol;
+      
+      if (!isValidAddress(recipientStr, protocol)) {
+        // Provide more specific error messages based on chain type
+        if (protocol === ProtocolType.Ethereum) {
+          errors.recipient = 'Invalid address format';
+        } else if (protocol === ProtocolType.Cosmos) {
+          errors.recipient = 'Invalid address format';
+        } else {
+          errors.recipient = 'Invalid address format for destination chain';
+        }
+      }
+    }
+
+    // Validate origin and destination chains
+    if (!origin || !destination) {
+      errors.form = 'Origin and destination chains must be selected';
+    } else if (origin === destination) {
+      errors.form = 'Origin and destination chains must be different';
+    }
+
+    // Validate token index
+    if (isNullish(tokenIndex) || tokenIndex < 0) {
+      errors.token = 'Invalid token selection';
+    }
+
+    // Return early if we have basic validation errors
+    if (Object.keys(errors).length > 0) {
+      return [errors, null, null];
+    }
 
     let token = getTokenByIndex(warpCore, tokenIndex);
 

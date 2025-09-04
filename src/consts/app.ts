@@ -8,10 +8,10 @@ export const MAIN_FONT = SpaceGrotesk({
 });
 export const APP_NAME = 'Nym Bridge';
 export const APP_DESCRIPTION = 'Bridge NYM tokens between Binance Smart Chain and Nym Network';
-export const APP_URL = 'nym-bridge.vercel.app';
+export const APP_URL = 'bridge.nym.com';
 export const BRAND_COLOR = '#09B051'; // Nym primary green
 export const BACKGROUND_COLOR = '#151515'; // Nym dark background
-export const BACKGROUND_IMAGE = 'url(/backgrounds/main.svg)'; // Use Nym background
+export const BACKGROUND_IMAGE = 'url(/backgrounds/main.svg)';
 
 // Supported chains for Nym Bridge
 export const SUPPORTED_CHAINS = {
